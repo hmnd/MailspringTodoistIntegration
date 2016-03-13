@@ -51,25 +51,55 @@ module.exports = React.createClass({
     },
 
     render: function(){
+        return <div className="n1todoist-wrapper">
+            <div className="n1todoist-header">
+                <img src="nylas://N1TodoistIntegration/assets/todoist_logo.png" />
+            </div>
+            <div className="n1todoist-content">
+            {this._renderContent()}
+            </div>
+            <div className="n1todoist-footer">
+                {this._renderFooter()}
+
+            </div>
+            </div>
+    },
+
+    _renderContent: function(){
         if(!this.state.authenticated){
-            return <Login whenLoggedIn={this.handleLogin} credentials={todoistCredentials}/>
+            return <div>
+                    <div className="n1todoist-logintext"> Login with your Todoist account </div>
+                    <Login whenLoggedIn={this.handleLogin} credentials={todoistCredentials}/>
+
+                </div>
         }else if(!this.state.task){
             return <div>
                 <input
+                    className="n1todoist-textinput"
                     type="text"
                     value={this.state.label}
                     onChange={this.onLabelChange} />
-                <button onClick={this.onSaveClick} >Save</button>
-                <Logout whenLoggedOut={this.handleLogout} /></div>
+                <button className="n1todoist-save" onClick={this.onSaveClick} >Add as task</button>
+                </div>
         }else{
             return <div>
                 <input
-                type="text"
-                value={this.state.label}
-                onChange={this.onLabelChange} />
-            <button onClick={this.onSaveClick} >Update</button>
-            <Logout whenLoggedOut={this.handleLogout} /></div>
+                    className="n1todoist-textinput"
+                    type="text"
+                    value={this.state.label}
+                    onChange={this.onLabelChange} />
+                <button className="n1todoist-save" onClick={this.onSaveClick} >Update task</button>
+                </div>
         }
+    },
+
+    _renderFooter: function(){
+        if(this.state.authenticated){
+            return <Logout whenLoggedOut={this.handleLogout} />
+        }else{
+            return <span></span>
+        }
+
     },
 
     onSaveClick: function(){

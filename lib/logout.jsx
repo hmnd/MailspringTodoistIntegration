@@ -6,7 +6,7 @@ import {
 module.exports = React.createClass({
 
     render: function(){
-        return <button onClick={this.handleLogoutClick}> Logout </button>
+        return <button className="n1todoist-logout" onClick={this.handleLogoutClick}> Logout </button>
     },
 
 

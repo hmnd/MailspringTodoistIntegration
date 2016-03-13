@@ -10,13 +10,12 @@ var BrowserWindow = remote.BrowserWindow;
 module.exports = React.createClass({
 
     render: function(){
-        return <button onClick={this.handleLoginClick}> Login </button>
+        return <button className="n1todoist-loginbtn" onClick={this.handleLoginClick}> Login </button>
     },
 
     handleLoginClick: function(){
-        loginWindow = new BrowserWindow({ width: 800, height: 600, show: false, 'node-integration': false });
         loginUrl = this.props.credentials.oauth + '?client_id=' + this.props.credentials.clientId + '&scope=' + this.props.credentials.scopes;
-        loginWindow = new BrowserWindow({ width: 800, height: 600, show: false, 'node-integration': false });
+        loginWindow = new BrowserWindow({ width: 400, height: 500, show: false, 'node-integration': false });
         loginWindow.loadUrl(loginUrl)
         loginWindow.show();
         loginWindow.webContents.on('did-get-redirect-request',this.handleLoginCallback);
