@@ -10,6 +10,8 @@
     "nylas": ">=0.4.14-53cd69b"
   },
   "description": "Enter a description of your package!",
-  "dependencies": {},
+  "dependencies": {
+    "superagent": "^1.8.0"
+  },
   "license": "MIT"
 }
