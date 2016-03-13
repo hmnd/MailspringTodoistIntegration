@@ -1,4 +1,4 @@
 
-## My Package
+## Todoist Integration for Nylas N1
 
-A sample package for N1. It demonstrates how to add components to the composer's action bar and the message sidebar. Enjoy!
+This is a Todoist integration for Nylas N1. 
