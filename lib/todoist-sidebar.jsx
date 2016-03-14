@@ -18,7 +18,10 @@ var todoistCredentials = {
 
 var loginWindow = null;
 
-
+//TODO: Add Label for mail
+//TODO: Add reminder
+//TODO: Add project selection
+//TODO: Add labeling
 module.exports = React.createClass({
 
 
@@ -26,7 +29,8 @@ module.exports = React.createClass({
         return {
             task: TodoistTaskStore.taskForFocusedContent() ? TodoistTaskStore.taskForFocusedContent().id : null,
             label: TodoistTaskStore.taskForFocusedContent() ? TodoistTaskStore.taskForFocusedContent().content : FocusedContentStore.focused('thread').subject,
-            authenticated: localStorage.getItem('N1todoist_authentication') !== null ? true : false
+            authenticated: localStorage.getItem('N1todoist_authentication') !== null ? true : false,
+            loading: true
         }
     },
 
@@ -47,11 +51,15 @@ module.exports = React.createClass({
         this.setState({
             task: TodoistTaskStore.taskForFocusedContent() ? TodoistTaskStore.taskForFocusedContent().id : null,
             label: TodoistTaskStore.taskForFocusedContent() ? TodoistTaskStore.taskForFocusedContent().content : FocusedContentStore.focused('thread').subject,
+            loading: TodoistTaskStore.loading()
         });
     },
 
     render: function(){
-        return <div className="n1todoist-wrapper">
+        return <div className={"n1todoist-wrapper" + (this.state.loading ? " loading" : "")}>
+            <div className="n1todoist-loading">
+                <div className="n1todoist-loadingtext">Loading...</div>
+            </div>
             <div className="n1todoist-header">
                 <img src="nylas://N1TodoistIntegration/assets/todoist_logo.png" />
             </div>

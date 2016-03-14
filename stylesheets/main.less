@@ -12,6 +12,35 @@
   background-color: @todoist-grey;
   font-family: 'Nylas-Pro';
 
+  .n1todoist-loading{
+    display: flex;
+    align-items: center;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: @todoist-grey;
+    color: #000;
+    opacity: 0;
+    z-index: 100;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0.2s linear, opacity 0.2s linear;
+
+    .n1todoist-loadingtext{
+        flex: 1;
+        text-align: center;
+    }
+  }
+
+  &.loading{
+    .n1todoist-loading{
+      visibility: visible;
+      opacity: 1;
+      transition-delay:0s;
+
+    }
+  }
+
   .n1todoist-header{
 
     border-bottom: 2px solid @todoist-red;
@@ -46,11 +75,11 @@
   }
   .n1todoist-loginbtn,
   .n1todoist-save{
-      background-color: @todoist-red;
-      border: none;
-      height: 30px;
-      width: 100%;
-      color: #FFF;
+    background-color: @todoist-red;
+    border: none;
+    height: 30px;
+    width: 100%;
+    color: #FFF;
   }
 
   .n1todoist-footer{
@@ -70,5 +99,25 @@
     cursor: pointer;
     font-size: 12px;
 
+  }
+}
+
+@-webkit-keyframes display-none-transition {
+  0% {
+    opacity: 0;
+    display: flex;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes display-none-transition {
+  0% {
+    opacity: 0;
+    display: flex;
+  }
+  100% {
+    opacity: 1;
   }
 }

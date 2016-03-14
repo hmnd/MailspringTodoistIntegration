@@ -3,6 +3,8 @@ import NylasStore from 'nylas-store';
 import {FocusedContentStore} from 'nylas-exports';
 
 
+
+
 class TodoistTaskStore extends NylasStore {
   constructor() {
     super();
@@ -32,6 +34,8 @@ class TodoistTaskStore extends NylasStore {
   }
 
   save(taskOptions){
+    this._loading = true;
+    this.trigger(this);
     if(!this._clientHasTask()){
       this._add(taskOptions);
     }else{
@@ -41,8 +45,7 @@ class TodoistTaskStore extends NylasStore {
   }
 
   _setTask(forceReload = false){
-    console.log("forceReload");
-    console.log(forceReload);
+
     if(forceReload === false){
       for(var key in this._tasks){
         if(this._tasks[key].id === this._taskId){
@@ -56,7 +59,12 @@ class TodoistTaskStore extends NylasStore {
 
     if(!this._task || forceReload === true){
       this._todoistFetchTasks();
+    }else{
+      this._loading = false;
+      this.trigger(this);
+
     }
+
 
 
 
@@ -115,7 +123,8 @@ class TodoistTaskStore extends NylasStore {
   // Called when the FocusedContactStore `triggers`, notifying us that the data
   // it vends has changed.
   _onFocusedContentChanged () {
-
+    this._loading = true;
+    this.trigger(this);
     const thread = this._getThread();
     let tasks = this._getTaskStorage();
 
@@ -125,7 +134,6 @@ class TodoistTaskStore extends NylasStore {
 
     if (thread && tasks) {
       this._taskId = tasks[thread.clientId];
-      console.log("Task ID " + this._taskId);
       if (this._taskId !== undefined) {
          this._setTask();
       }
@@ -135,7 +143,6 @@ class TodoistTaskStore extends NylasStore {
   }
 
   _todoistFetchTasks() {
-    this._loading = true;
     let accessToken = localStorage.getItem("N1todoist_authentication")
     let seqNo = 0
     let resourceTypes = ['items']
@@ -162,7 +169,6 @@ class TodoistTaskStore extends NylasStore {
   }
 
   _handleAddTaskResponse(error, response) {
-    this._loading = false;
     if(response && response.ok){
       let taskId = response.body.TempIdMapping[this.temp_id];
       var tasks = this._getTaskStorage();
@@ -173,6 +179,7 @@ class TodoistTaskStore extends NylasStore {
       tasks[thread.clientId] = taskId;
       this._taskId = taskId;
       localStorage.setItem("N1todoist_tasks", JSON.stringify(tasks));
+      this._setTask();
       this.trigger(this);
     }else{
       console.log(error);
@@ -180,7 +187,6 @@ class TodoistTaskStore extends NylasStore {
   }
 
   _handleUpdateTaskResponse(error, response) {
-    this._loading = false;
     if(response && response.ok){
       this._setTask(true);
       this.trigger(this);
@@ -198,10 +204,8 @@ class TodoistTaskStore extends NylasStore {
   }
 
   _clientHasTask (){
-
     const thread = this._getThread();
     let tasks = this._getTaskStorage();
-
 
     return tasks && tasks[thread.clientId] ? true : false;
 
