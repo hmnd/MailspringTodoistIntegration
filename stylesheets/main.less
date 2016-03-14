@@ -2,6 +2,20 @@
 @import "ui-mixins";
 @todoist-red: #e24233;
 @todoist-grey: #fafafa;
+
+.n1todoist-maillabel{
+  border: 1px solid @todoist-red;
+  background-color: #FFF;
+  color: @todoist-red;
+}
+
+.thread-list .focused .mail-label.n1todoist-maillabel{
+  border: 1px solid @todoist-red !important;
+  background-color: @todoist-red !important;
+  color: #FFF !important;
+}
+
+
 .n1todoist-wrapper{
   width: ~"calc(100% + 30px)";
   position: relative;
@@ -40,6 +54,8 @@
 
     }
   }
+
+
 
   .n1todoist-header{
 

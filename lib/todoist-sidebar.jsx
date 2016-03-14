@@ -19,10 +19,11 @@ var todoistCredentials = {
 var loginWindow = null;
 
 //TODO: Add Label for mail
-//TODO: Add reminder
+//TODO: Add schedule
 //TODO: Add project selection
 //TODO: Add labeling
-module.exports = React.createClass({
+
+var TodoistSidebar = React.createClass({
 
 
     getInitialState: function(){
@@ -68,7 +69,6 @@ module.exports = React.createClass({
             </div>
             <div className="n1todoist-footer">
                 {this._renderFooter()}
-
             </div>
             </div>
     },
@@ -133,3 +133,5 @@ module.exports = React.createClass({
 
 
 });
+
+module.exports = TodoistSidebar;

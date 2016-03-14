@@ -206,7 +206,6 @@ class TodoistTaskStore extends NylasStore {
   _clientHasTask (){
     const thread = this._getThread();
     let tasks = this._getTaskStorage();
-
     return tasks && tasks[thread.clientId] ? true : false;
 
   }
