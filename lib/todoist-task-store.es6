@@ -30,6 +30,10 @@ class TodoistTaskStore extends NylasStore {
     return this._task;
   }
 
+  getDone(){
+    return this._task ? this._task.done : false;
+  }
+
   loading() {
     return this._loading;
   }
@@ -52,6 +56,12 @@ class TodoistTaskStore extends NylasStore {
     this._loading = true;
     this.trigger(this);
     this._done();
+  }
+
+  undo(){
+    this._loading = true;
+    this.trigger(this);
+    this._undo();
   }
 
   delete(){
@@ -147,6 +157,22 @@ class TodoistTaskStore extends NylasStore {
       .send(payload)
       .set("Content-Type","application/x-www-form-urlencoded")
       .end(this._handleDoneTaskResponse.bind(this));
+      this.trigger(this);
+    }
+  }
+
+  _undo(){
+    let uuidVal = this._guidCreate();
+    let accessToken = localStorage.getItem("N1todoist_authentication");
+    command = [{ type: "item_uncomplete", uuid: uuidVal, args: { id: [this._taskId]}}]
+    payload = { token: accessToken, commands: JSON.stringify(command) }
+
+    if(accessToken){
+      request
+      .post('https://todoist.com/API/v6/sync')
+      .send(payload)
+      .set("Content-Type","application/x-www-form-urlencoded")
+      .end(this._handleUndoTaskResponse.bind(this));
       this.trigger(this);
     }
   }
@@ -255,6 +281,19 @@ class TodoistTaskStore extends NylasStore {
       let tasks = this.getTaskStorage();
       const thread = this._getThread();
       tasks[thread.clientId].done = true;
+      localStorage.setItem("N1todoist_tasks", JSON.stringify(tasks));
+      this._setTask();
+      this.trigger(this);
+    }else{
+      console.log(error);
+    }
+  }
+
+  _handleUndoTaskResponse(error, response) {
+    if(response && response.ok){
+      let tasks = this.getTaskStorage();
+      const thread = this._getThread();
+      tasks[thread.clientId].done = false;
       localStorage.setItem("N1todoist_tasks", JSON.stringify(tasks));
       this._setTask();
       this.trigger(this);
