@@ -47,6 +47,7 @@ class TodoistTaskStore extends NylasStore {
   _setTask(forceReload = false){
 
     if(forceReload === false){
+
       for(var key in this._tasks){
         if(this._tasks[key].id === this._taskId){
           this._task = this._tasks[key];
@@ -56,17 +57,13 @@ class TodoistTaskStore extends NylasStore {
       }
     }
 
-
     if(!this._task || forceReload === true){
       this._todoistFetchTasks();
     }else{
+
       this._loading = false;
       this.trigger(this);
-
     }
-
-
-
 
   }
 
@@ -137,9 +134,10 @@ class TodoistTaskStore extends NylasStore {
       if (this._taskId !== undefined) {
          this._setTask();
       }
+    }else{
+      this._loading = false;
+      this.trigger(this);
     }
-
-    this.trigger(this);
   }
 
   _todoistFetchTasks() {
@@ -159,7 +157,6 @@ class TodoistTaskStore extends NylasStore {
   }
 
   _handleTodoistFetchTasksResponse(error, response) {
-    this._loading = false;
     if(response && response.ok){
       this._tasks = response.body.Items;
       this._setTask();

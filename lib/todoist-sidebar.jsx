@@ -31,7 +31,7 @@ var TodoistSidebar = React.createClass({
             task: TodoistTaskStore.taskForFocusedContent() ? TodoistTaskStore.taskForFocusedContent().id : null,
             label: TodoistTaskStore.taskForFocusedContent() ? TodoistTaskStore.taskForFocusedContent().content : FocusedContentStore.focused('thread').subject,
             authenticated: localStorage.getItem('N1todoist_authentication') !== null ? true : false,
-            loading: true
+            loading: false
         }
     },
 
