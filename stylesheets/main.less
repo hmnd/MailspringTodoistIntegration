@@ -79,17 +79,39 @@
 
   .n1todoist-iconbtn{
     float: left;
-    width: 30%;
+    width: 49%;
     height: 30px;
-    color: #FFF;
-    background-color: @todoist-red;
+    background-color: transparent;
     border: none;
-    margin-right: 4.5%;
+    margin-right: 2%;
     cursor: pointer;
-
+    &--done{
+      color: #FFF;
+      background-color: @todoist-red;
+    }
     &--delete{
       margin-right: 0;
     }
+  }
+
+  .n1todoist-updatebtn,
+  .n1todoist-cancelbtn{
+    float: left;
+    width: 49%;
+    height: 30px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .n1todoist-updatebtn{
+    color: #FFF;
+    background-color: @todoist-red;
+  }
+
+  .n1todoist-cancelbtn{
+    background-color: transparent;
+    margin-right: 2%;
+
   }
 
   .n1todoist-textinput{

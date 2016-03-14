@@ -95,7 +95,10 @@ var TodoistSidebar = React.createClass({
                     type="text"
                     value={this.state.label}
                     onChange={this.onLabelChange} />
-                <button className="n1todoist-save" onClick={this.onSaveClick} >Update task</button>
+                <div className="n1todoist-btnrow">
+                <button className="n1todoist-updatebtn" onClick={this.onSaveClick} >Save</button>
+                <button className="n1todoist-cancelbtn" onClick={this.onUpdateCancelClick} >Cancel</button>
+                </div>
                 </div>
         }else{
             return <div>
@@ -104,10 +107,10 @@ var TodoistSidebar = React.createClass({
                     type="text"
                     disabled="true"
                     value={this.state.label}
+                    onClick={this.onEditClick}
                     onChange={this.onLabelChange} />
                 <div className="n1todoist-btnrow">
                 <button className="n1todoist-iconbtn n1todoist-iconbtn--done" onClick={this.onDoneClick} >Done</button>
-                <button className="n1todoist-iconbtn n1todoist-iconbtn--edit" onClick={this.onEditClick} >Edit</button>
                 <button className="n1todoist-iconbtn n1todoist-iconbtn--delete" onClick={this.onDeleteClick} >Delete</button>
                 </div>
                 </div>
@@ -136,6 +139,12 @@ var TodoistSidebar = React.createClass({
     onEditClick: function(){
         this.setState({
             update: true
+        });
+    },
+
+    onUpdateCancelClick: function(){
+        this.setState({
+            update: false
         });
     },
 
