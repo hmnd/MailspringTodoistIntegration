@@ -18,11 +18,10 @@ var todoistCredentials = {
 
 var loginWindow = null;
 
-//TODO: Add Label for mail
 //TODO: Add schedule
 //TODO: Add project selection
-//TODO: Add labeling
-
+//TODO: Remove functionality
+//TODO: Set task done
 var TodoistSidebar = React.createClass({
 
 
@@ -97,6 +96,8 @@ var TodoistSidebar = React.createClass({
                     value={this.state.label}
                     onChange={this.onLabelChange} />
                 <button className="n1todoist-save" onClick={this.onSaveClick} >Update task</button>
+                <button className="n1todoist-save" onClick={this.onDoneClick} >Done</button>
+                <button className="n1todoist-save" onClick={this.onDeleteClick} >Delete</button>
                 </div>
         }
     },
@@ -116,6 +117,14 @@ var TodoistSidebar = React.createClass({
         };
 
         TodoistTaskStore.save(options);
+    },
+
+    onDoneClick: function(){
+        TodoistTaskStore.done();
+    },
+
+    onDeleteClick: function(){
+        TodoistTaskStore.delete();
     },
 
     onLabelChange: function(event){

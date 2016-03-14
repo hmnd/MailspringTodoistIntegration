@@ -8,38 +8,46 @@ var TodoistLabel = React.createClass({
 
     getInitialState: function(){
         return {
-            hasTask: this._hasTask()
+            hasTask: this._hasTask(),
+            done: this._isDone()
         }
     },
 
     componentDidMount: function(){
-        //this._unsubscribe =
+        this._unsubscribe = TodoistTaskStore.listen(this.onTaskStoreChange);
     },
 
     componentWillUnmount: function() {
-        //this._unsubscribe();
+        this._unsubscribe();
+    },
+
+
+    onTaskStoreChange: function(){
+        this.setState({
+            hasTask: this._hasTask(),
+            done: this._isDone()
+        })
     },
 
     render: function(){
 
         if(this.state.hasTask){
-            return <div className="mail-label n1todoist-maillabel">Task</div>
+            return <div className={"mail-label n1todoist-maillabel" + (this.state.done ? " done" : "")}>Task</div>
         }else{
             return null
         }
     },
 
     _hasTask: function(){
-        let taskStorage = TodoistTaskStore._getTaskStorage();
-        let hasTask = false;
+        let task = TodoistTaskStore.getTaskByClientId(this.props.thread.clientId)
 
-        for(var key in taskStorage){
-            if(key === this.props.thread.clientId){
-                hasTask = true;
-                break;
-            }
-        }
-        return hasTask;
+        return task ? true : false;
+    },
+
+    _isDone: function(){
+        let task = TodoistTaskStore.getTaskByClientId(this.props.thread.clientId)
+
+        return task ? task.done : false;
     }
 
 });
