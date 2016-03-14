@@ -20,8 +20,7 @@ var loginWindow = null;
 
 //TODO: Add schedule
 //TODO: Add project selection
-//TODO: Remove functionality
-//TODO: Set task done
+
 var TodoistSidebar = React.createClass({
 
 
@@ -30,6 +29,7 @@ var TodoistSidebar = React.createClass({
             task: TodoistTaskStore.taskForFocusedContent() ? TodoistTaskStore.taskForFocusedContent().id : null,
             label: TodoistTaskStore.taskForFocusedContent() ? TodoistTaskStore.taskForFocusedContent().content : FocusedContentStore.focused('thread').subject,
             authenticated: localStorage.getItem('N1todoist_authentication') !== null ? true : false,
+            update: false,
             loading: false
         }
     },
@@ -88,7 +88,7 @@ var TodoistSidebar = React.createClass({
                     onChange={this.onLabelChange} />
                 <button className="n1todoist-save" onClick={this.onSaveClick} >Add as task</button>
                 </div>
-        }else{
+        }else if(this.state.update){
             return <div>
                 <input
                     className="n1todoist-textinput"
@@ -96,8 +96,20 @@ var TodoistSidebar = React.createClass({
                     value={this.state.label}
                     onChange={this.onLabelChange} />
                 <button className="n1todoist-save" onClick={this.onSaveClick} >Update task</button>
-                <button className="n1todoist-save" onClick={this.onDoneClick} >Done</button>
-                <button className="n1todoist-save" onClick={this.onDeleteClick} >Delete</button>
+                </div>
+        }else{
+            return <div>
+                <input
+                    className="n1todoist-textinput"
+                    type="text"
+                    disabled="true"
+                    value={this.state.label}
+                    onChange={this.onLabelChange} />
+                <div className="n1todoist-btnrow">
+                <button className="n1todoist-iconbtn n1todoist-iconbtn--done" onClick={this.onDoneClick} >Done</button>
+                <button className="n1todoist-iconbtn n1todoist-iconbtn--edit" onClick={this.onEditClick} >Edit</button>
+                <button className="n1todoist-iconbtn n1todoist-iconbtn--delete" onClick={this.onDeleteClick} >Delete</button>
+                </div>
                 </div>
         }
     },
@@ -115,8 +127,16 @@ var TodoistSidebar = React.createClass({
         var options = {
             label: this.state.label
         };
-
         TodoistTaskStore.save(options);
+        this.setState({
+            update: false
+        });
+    },
+
+    onEditClick: function(){
+        this.setState({
+            update: true
+        });
     },
 
     onDoneClick: function(){
