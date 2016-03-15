@@ -1,5 +1,5 @@
 
-## Todoist Integration for Nylas N1
+# Todoist Integration for Nylas N1
 
 This is a Todoist integration for Nylas N1. 
 
@@ -9,10 +9,10 @@ This package is inspired by [anopensourceguy/TodoistN1](https://github.com/anope
 
 ---
 
-Todos
-*[x] Done/Undo - Add/Remove Task
-*[x] Label E-mail
-*[ ] Set reminder
-*[ ] Add to project
-*[ ] Better UI
-*[ ] Filtered thread by tasks
+##Todos
+- [x] Done/Undo - Add/Remove Task
+- [x] Label E-mail
+- [ ] Set reminder
+- [ ] Add to project
+- [ ] Better UI
+- [ ] Filtered thread by tasks
