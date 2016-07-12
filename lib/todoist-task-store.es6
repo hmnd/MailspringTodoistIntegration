@@ -12,6 +12,13 @@ class TodoistTaskStore extends NylasStore {
     this._error = null;
     this._tasks = null;
 
+    var self = this;
+    setInterval(function(){
+      self._todoistFetchTasks();
+    }, 30000);
+
+
+
     this.listenTo(FocusedContentStore, this._onFocusedContentChanged);
   }
 
@@ -90,14 +97,31 @@ class TodoistTaskStore extends NylasStore {
         if(tasks[taskKey].id === storageTasks[clientKey].id){
           storageTasks[clientKey].content = tasks[taskKey].content;
           storageTasks[clientKey].done = tasks[taskKey].checked === 1 ? true : false;
+          if(tasks[taskKey].is_deleted === 1){
+            delete storageTasks[clientKey];
+          }
+
         }
       }
     }
+
+    this.trigger(this);
+
 
     localStorage.setItem("N1todoist_tasks", JSON.stringify(storageTasks));
     this._setTask();
 
 
+  }
+
+  _setSynchToken(token){
+    localStorage.setItem("N1todoist_synchToken", token);
+  }
+
+  _getSynchToken(){
+    var token = localStorage.getItem("N1todoist_synchToken");
+
+    return token !== null ? token : '*';
   }
 
   _randomize(){
@@ -205,9 +229,9 @@ class TodoistTaskStore extends NylasStore {
     this.trigger(this);
     const thread = this._getThread();
     let tasks = this.getTaskStorage();
-    if(!this._tasks){
+    // if(!this._tasks){
       this._todoistFetchTasks();
-    }
+    // }
 
 
     this._task = null;
@@ -227,9 +251,9 @@ class TodoistTaskStore extends NylasStore {
 
   _todoistFetchTasks() {
     let accessToken = localStorage.getItem("N1todoist_authentication")
-    let seqNo = 0
+    let syncToken = this._getSynchToken();
     let resourceTypes = ['items']
-    let payload = { token: accessToken, seq_no: seqNo, resource_types: JSON.stringify(resourceTypes), args: {id: this._task} }
+    let payload = { token: accessToken, sync_token: syncToken, resource_types: JSON.stringify(resourceTypes), args: {} }
 
     if (accessToken) {
       request
@@ -243,7 +267,8 @@ class TodoistTaskStore extends NylasStore {
 
   _handleTodoistFetchTasksResponse(error, response) {
     if(response && response.ok){
-      this._setTasks(response.body.Items);
+      this._setSynchToken(response.body.sync_token)
+      this._setTasks(response.body.items);
     }else{
       console.log(error);
     }
