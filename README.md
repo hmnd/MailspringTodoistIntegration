@@ -12,6 +12,7 @@ This package is inspired by [anopensourceguy/TodoistN1](https://github.com/anope
 ##Todos
 - [x] Done/Undo - Add/Remove Task
 - [x] Label E-mail
+- [x] Synchronize tasks
 - [ ] Set reminder
 - [ ] Add to project
 - [ ] Better UI
