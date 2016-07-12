@@ -1,5 +1,5 @@
 import {
-  ComponentRegistry,
+  ComponentRegistry
 } from 'nylas-exports';
 
 import TodoistSidebar from './todoist-sidebar';

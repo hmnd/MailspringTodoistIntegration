@@ -84,7 +84,7 @@ class TodoistTaskStore extends NylasStore {
     for(var taskKey in tasks){
       for(var clientKey in storageTasks){
         if(tasks[taskKey].id === storageTasks[clientKey].id){
-          console.log(tasks[taskKey]);
+          storageTasks[clientKey].project_id = tasks[taskKey].project_id;
           storageTasks[clientKey].content = tasks[taskKey].content;
           storageTasks[clientKey].done = tasks[taskKey].checked === 1 ? true : false;
         }
@@ -108,10 +108,11 @@ class TodoistTaskStore extends NylasStore {
   _add(taskOptions){
     let uuidVal = this._guidCreate();
     this.temp_id = this._guidCreate();
-    let taskContent = this._taskcontent = taskOptions.label;
+    this._taskcontent = taskOptions.label;
+    this._project_id = taskOptions.project_id;
     let accessToken = localStorage.getItem("N1todoist_authentication");
 
-    command = [{ type: "item_add", uuid: uuidVal, temp_id: this.temp_id, args: { content: taskContent}}]
+    command = [{ type: "item_add", uuid: uuidVal, temp_id: this.temp_id, args: { content: this._taskcontent, project_id: this._project_id}}]
     payload = { token: accessToken, commands: JSON.stringify(command) }
 
     if(accessToken){
@@ -128,9 +129,11 @@ class TodoistTaskStore extends NylasStore {
 
   _update(taskOptions){
     let uuidVal = this._guidCreate();
-    let taskName = this._task.content = taskOptions.label;
+    this._task.content = taskOptions.label;
+    this._project_id = taskOptions.project_id;
+
     let accessToken = localStorage.getItem("N1todoist_authentication");
-    command = [{ type: "item_update", uuid: uuidVal, args: { id: this._taskId ,content: taskName}}]
+    command = [{ type: "item_update", uuid: uuidVal, args: { id: this._taskId, content: this._taskcontent, project_id: this._project_id}}]
     payload = { token: accessToken, commands: JSON.stringify(command) }
 
     if(accessToken){
@@ -256,6 +259,7 @@ class TodoistTaskStore extends NylasStore {
       }
       tasks[thread.clientId] = {
         id: taskId,
+        project_id: this._project_id,
         content: this._taskcontent,
         done: false
       };
