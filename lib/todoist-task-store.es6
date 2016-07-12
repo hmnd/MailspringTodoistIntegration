@@ -318,7 +318,6 @@ class TodoistTaskStore extends NylasStore {
   }
 
   _handleUndoTaskResponse(error, response) {
-    console.log(response);
     if(response && response.ok){
       let tasks = this.getTaskStorage();
       const thread = this._getThread();
