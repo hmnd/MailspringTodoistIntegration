@@ -19,4 +19,4 @@ This package is inspired by [anopensourceguy/TodoistN1](https://github.com/anope
 - [ ] Filtered thread by tasks
 
 ##Screenhots
-![](assets/screen.jgg)
+![](assets/screen.jpg)
