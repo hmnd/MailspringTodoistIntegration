@@ -104,13 +104,14 @@ var TodoistSidebar = React.createClass({
                 </div>
         }else{
             return <div>
+                <div onClick={this.onEditClick} >
                 <input
                     className="n1todoist-textinput"
                     type="text"
                     disabled="true"
                     value={this.state.label}
-                    onClick={this.onEditClick}
                     onChange={this.onLabelChange} />
+                </div>
                 <div className="n1todoist-btnrow">
                 <button className="n1todoist-iconbtn n1todoist-iconbtn--done" onClick={this.onDoneClick} >{this.state.done ? "Undo" : "Done"}</button>
                 <button className="n1todoist-iconbtn n1todoist-iconbtn--delete" onClick={this.onDeleteClick} >Delete</button>
