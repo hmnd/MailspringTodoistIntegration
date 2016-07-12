@@ -72,10 +72,14 @@ class TodoistTaskStore extends NylasStore {
 
   _setTask(){
     let thread = this._getThread();
-    this._task = this.getTaskByClientId(thread.clientId);
-    this._loading = false;
-    this.trigger(this);
+    if(typeof thread !== "undefined"){
+      this._task = this.getTaskByClientId(thread.clientId);
+      this._loading = false;
+      this.trigger(this);
+    }
+
   }
+
 
   _setTasks(tasks){
 
@@ -84,7 +88,6 @@ class TodoistTaskStore extends NylasStore {
     for(var taskKey in tasks){
       for(var clientKey in storageTasks){
         if(tasks[taskKey].id === storageTasks[clientKey].id){
-          console.log(tasks[taskKey]);
           storageTasks[clientKey].content = tasks[taskKey].content;
           storageTasks[clientKey].done = tasks[taskKey].checked === 1 ? true : false;
         }
