@@ -6,6 +6,7 @@ import {
     remote
 } from 'electron';
 var BrowserWindow = remote.BrowserWindow;
+var loginWindow;
 
 module.exports = React.createClass({
 
@@ -14,9 +15,9 @@ module.exports = React.createClass({
     },
 
     handleLoginClick: function(){
-        loginUrl = this.props.credentials.oauth + '?client_id=' + this.props.credentials.clientId + '&scope=' + this.props.credentials.scopes;
+        var loginUrl = this.props.credentials.oauth + '?client_id=' + this.props.credentials.clientId + '&scope=' + this.props.credentials.scopes;
         loginWindow = new BrowserWindow({ width: 400, height: 500, show: false, 'node-integration': false });
-        loginWindow.loadUrl(loginUrl)
+        loginWindow.loadURL(loginUrl);
         loginWindow.show();
         loginWindow.webContents.on('did-get-redirect-request',this.handleLoginCallback);
     },

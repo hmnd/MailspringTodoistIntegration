@@ -9,7 +9,6 @@ import Login from './login';
 import Logout from './logout';
 import Projects from './projects';
 import TodoistTaskStore from './todoist-task-store';
-import Scheduler from './scheduler';
 
 var todoistCredentials = {
     url: 'https://todoist.com/API/v6/sync',
@@ -117,14 +116,16 @@ var TodoistSidebar = React.createClass({
                 </div>
         }else{
             return <div>
+                <div onClick={this.onEditClick} >
                 <input
                     className="n1todoist-textinput"
                     type="text"
                     disabled="true"
                     value={this.state.label}
-                    onClick={this.onEditClick}
                     onChange={this.onLabelChange} />
+                </div>
                 <Projects onChange={this._changeCurrentProject}/>
+
                 <div className="n1todoist-btnrow">
                 <button className="n1todoist-iconbtn n1todoist-iconbtn--done" onClick={this.onDoneClick} >{this.state.done ? "Undo" : "Done"}</button>
                 <button className="n1todoist-iconbtn n1todoist-iconbtn--delete" onClick={this.onDeleteClick} >Delete</button>

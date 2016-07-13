@@ -12,6 +12,13 @@ class TodoistTaskStore extends NylasStore {
     this._error = null;
     this._tasks = null;
 
+    var self = this;
+    setInterval(function(){
+      self._todoistFetchTasks();
+    }, 30000);
+
+
+
     this.listenTo(FocusedContentStore, this._onFocusedContentChanged);
   }
 
@@ -72,10 +79,14 @@ class TodoistTaskStore extends NylasStore {
 
   _setTask(){
     let thread = this._getThread();
-    this._task = this.getTaskByClientId(thread.clientId);
-    this._loading = false;
-    this.trigger(this);
+    if(typeof thread !== "undefined"){
+      this._task = this.getTaskByClientId(thread.clientId);
+      this._loading = false;
+      this.trigger(this);
+    }
+
   }
+
 
   _setTasks(tasks){
 
@@ -84,17 +95,35 @@ class TodoistTaskStore extends NylasStore {
     for(var taskKey in tasks){
       for(var clientKey in storageTasks){
         if(tasks[taskKey].id === storageTasks[clientKey].id){
+
           storageTasks[clientKey].project_id = tasks[taskKey].project_id;
           storageTasks[clientKey].content = tasks[taskKey].content;
           storageTasks[clientKey].done = tasks[taskKey].checked === 1 ? true : false;
+          if(tasks[taskKey].is_deleted === 1){
+            delete storageTasks[clientKey];
+          }
+
         }
       }
     }
+
+    this.trigger(this);
+
 
     localStorage.setItem("N1todoist_tasks", JSON.stringify(storageTasks));
     this._setTask();
 
 
+  }
+
+  _setSynchToken(token){
+    localStorage.setItem("N1todoist_synchToken", token);
+  }
+
+  _getSynchToken(){
+    var token = localStorage.getItem("N1todoist_synchToken");
+
+    return token !== null ? token : '*';
   }
 
   _randomize(){
@@ -112,12 +141,12 @@ class TodoistTaskStore extends NylasStore {
     this._project_id = taskOptions.project_id;
     let accessToken = localStorage.getItem("N1todoist_authentication");
 
-    command = [{ type: "item_add", uuid: uuidVal, temp_id: this.temp_id, args: { content: this._taskcontent, project_id: this._project_id}}]
-    payload = { token: accessToken, commands: JSON.stringify(command) }
+    let command = [{ type: "item_add", uuid: uuidVal, temp_id: this.temp_id, args: { content: taskContent}}]
+    let payload = { token: accessToken, commands: JSON.stringify(command) }
 
     if(accessToken){
       request
-      .post('https://todoist.com/API/v6/sync')
+      .post('https://todoist.com/API/v7/sync')
       .send(payload)
       .set("Content-Type","application/x-www-form-urlencoded")
       .end(this._handleAddTaskResponse.bind(this));
@@ -133,12 +162,13 @@ class TodoistTaskStore extends NylasStore {
     this._project_id = taskOptions.project_id;
 
     let accessToken = localStorage.getItem("N1todoist_authentication");
-    command = [{ type: "item_update", uuid: uuidVal, args: { id: this._taskId, content: this._taskcontent, project_id: this._project_id}}]
-    payload = { token: accessToken, commands: JSON.stringify(command) }
+
+    let command = [{ type: "item_update", uuid: uuidVal, args: { id: this._taskId ,content: taskName}}]
+    let payload = { token: accessToken, commands: JSON.stringify(command) }
 
     if(accessToken){
       request
-      .post('https://todoist.com/API/v6/sync')
+      .post('https://todoist.com/API/v7/sync')
       .send(payload)
       .set("Content-Type","application/x-www-form-urlencoded")
       .end(this._handleUpdateTaskResponse.bind(this));
@@ -151,12 +181,12 @@ class TodoistTaskStore extends NylasStore {
   _done(){
     let uuidVal = this._guidCreate();
     let accessToken = localStorage.getItem("N1todoist_authentication");
-    command = [{ type: "item_close", uuid: uuidVal, args: { id: this._taskId}}]
-    payload = { token: accessToken, commands: JSON.stringify(command) }
+    let command = [{ type: "item_close", uuid: uuidVal, args: { id: this._taskId}}]
+    let payload = { token: accessToken, commands: JSON.stringify(command) }
 
     if(accessToken){
       request
-      .post('https://todoist.com/API/v6/sync')
+      .post('https://todoist.com/API/v7/sync')
       .send(payload)
       .set("Content-Type","application/x-www-form-urlencoded")
       .end(this._handleDoneTaskResponse.bind(this));
@@ -167,12 +197,12 @@ class TodoistTaskStore extends NylasStore {
   _undo(){
     let uuidVal = this._guidCreate();
     let accessToken = localStorage.getItem("N1todoist_authentication");
-    command = [{ type: "item_uncomplete", uuid: uuidVal, args: { id: [this._taskId]}}]
-    payload = { token: accessToken, commands: JSON.stringify(command) }
+    let command = [{ type: "item_uncomplete", uuid: uuidVal, args: { ids: [this._taskId]}}]
+    let payload = { token: accessToken, commands: JSON.stringify(command) }
 
     if(accessToken){
       request
-      .post('https://todoist.com/API/v6/sync')
+      .post('https://todoist.com/API/v7/sync')
       .send(payload)
       .set("Content-Type","application/x-www-form-urlencoded")
       .end(this._handleUndoTaskResponse.bind(this));
@@ -183,12 +213,12 @@ class TodoistTaskStore extends NylasStore {
   _delete(){
     let uuidVal = this._guidCreate();
     let accessToken = localStorage.getItem("N1todoist_authentication");
-    command = [{ type: "item_delete", uuid: uuidVal, args: { id: [this._taskId]}}]
-    payload = { token: accessToken, commands: JSON.stringify(command) }
+    let command = [{ type: "item_delete", uuid: uuidVal, args: { ids: [this._taskId]}}]
+    let payload = { token: accessToken, commands: JSON.stringify(command) }
 
     if(accessToken){
       request
-      .post('https://todoist.com/API/v6/sync')
+      .post('https://todoist.com/API/v7/sync')
       .send(payload)
       .set("Content-Type","application/x-www-form-urlencoded")
       .end(this._handleDeleteTaskResponse.bind(this));
@@ -205,9 +235,9 @@ class TodoistTaskStore extends NylasStore {
     this.trigger(this);
     const thread = this._getThread();
     let tasks = this.getTaskStorage();
-    if(!this._tasks){
+    // if(!this._tasks){
       this._todoistFetchTasks();
-    }
+    // }
 
 
     this._task = null;
@@ -227,13 +257,13 @@ class TodoistTaskStore extends NylasStore {
 
   _todoistFetchTasks() {
     let accessToken = localStorage.getItem("N1todoist_authentication")
-    let seqNo = 0
+    let syncToken = this._getSynchToken();
     let resourceTypes = ['items']
-    let payload = { token: accessToken, seq_no: seqNo, resource_types: JSON.stringify(resourceTypes), args: {id: this._task} }
+    let payload = { token: accessToken, sync_token: syncToken, resource_types: JSON.stringify(resourceTypes), args: {} }
 
     if (accessToken) {
       request
-      .post('https://todoist.com/API/v6/sync')
+      .post('https://todoist.com/API/v7/sync')
       .send(payload)
       .set("Content-Type","application/x-www-form-urlencoded")
       .end(this._handleTodoistFetchTasksResponse.bind(this))
@@ -243,7 +273,8 @@ class TodoistTaskStore extends NylasStore {
 
   _handleTodoistFetchTasksResponse(error, response) {
     if(response && response.ok){
-      this._setTasks(response.body.Items);
+      this._setSynchToken(response.body.sync_token)
+      this._setTasks(response.body.items);
     }else{
       console.log(error);
     }
@@ -251,7 +282,7 @@ class TodoistTaskStore extends NylasStore {
 
   _handleAddTaskResponse(error, response) {
     if(response && response.ok){
-      let taskId = response.body.TempIdMapping[this.temp_id];
+      let taskId = response.body.temp_id_mapping[this.temp_id];
       var tasks = this.getTaskStorage();
       const thread = this._getThread();
       if(!tasks){
