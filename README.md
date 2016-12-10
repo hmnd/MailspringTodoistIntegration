@@ -13,8 +13,8 @@ This package is inspired by [anopensourceguy/TodoistN1](https://github.com/anope
 - [x] Done/Undo - Add/Remove Task
 - [x] Label E-mail
 - [x] Synchronize tasks
+- [x] Add to project
 - [ ] Set reminder
-- [ ] Add to project
 - [ ] Better UI
 - [ ] Filtered thread by tasks
 
