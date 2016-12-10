@@ -1,11 +1,13 @@
 import {
     Utils,
     React,
+    ReactDOM,
     FocusedContentStore
 } from 'nylas-exports';
 
 import Login from './login';
 import Logout from './logout';
+import Projects from './projects';
 import TodoistTaskStore from './todoist-task-store';
 
 var todoistCredentials = {
@@ -28,6 +30,7 @@ var TodoistSidebar = React.createClass({
         return {
             task: TodoistTaskStore.taskForFocusedContent() ? TodoistTaskStore.taskForFocusedContent().id : null,
             label: TodoistTaskStore.taskForFocusedContent() ? TodoistTaskStore.taskForFocusedContent().content : FocusedContentStore.focused('thread').subject,
+            project_id: null,
             authenticated: localStorage.getItem('N1todoist_authentication') !== null ? true : false,
             done: TodoistTaskStore.getDone(),
             update: false,
@@ -36,19 +39,20 @@ var TodoistSidebar = React.createClass({
     },
 
     componentDidMount: function(){
-        this._unsubscribe = TodoistTaskStore.listen(this.onTaskStoreChange);
+        this._unsubscribeTaskStore = TodoistTaskStore.listen(this.onTaskStoreChange);
     },
 
     componentWillUnmount: function() {
-        this._unsubscribe();
+        this._unsubscribeTaskStore();
     },
 
 
     onTaskStoreChange: function(){
-        this._setStateFromStore();
+        this._setStateFromTaskStore();
     },
 
-    _setStateFromStore: function(){
+
+    _setStateFromTaskStore: function(){
         this.setState({
             task: TodoistTaskStore.taskForFocusedContent() ? TodoistTaskStore.taskForFocusedContent().id : null,
             label: TodoistTaskStore.taskForFocusedContent() ? TodoistTaskStore.taskForFocusedContent().content : FocusedContentStore.focused('thread').subject,
@@ -56,6 +60,16 @@ var TodoistSidebar = React.createClass({
             done: TodoistTaskStore.getDone()
         });
     },
+
+    _changeCurrentProject: function(project){
+        this.old_project = this.state.project_id;
+        this.setState({
+            project_id: project,
+            update: !this.state.task ? false : true
+        });
+    },
+
+
 
     render: function(){
         return <div className={"n1todoist-wrapper" + (this.state.loading ? " loading" : "")}>
@@ -88,6 +102,7 @@ var TodoistSidebar = React.createClass({
                     type="text"
                     value={this.state.label}
                     onChange={this.onLabelChange} />
+                <Projects onChange={this._changeCurrentProject}/>
                 <button className="n1todoist-save" onClick={this.onSaveClick} >Add as task</button>
                 </div>
         }else if(this.state.update){
@@ -97,6 +112,7 @@ var TodoistSidebar = React.createClass({
                     type="text"
                     value={this.state.label}
                     onChange={this.onLabelChange} />
+                <Projects selectedProject={this.state.task.project_id} onChange={this._changeCurrentProject}/>
                 <div className="n1todoist-btnrow">
                 <button className="n1todoist-updatebtn" onClick={this.onSaveClick} >Save</button>
                 <button className="n1todoist-cancelbtn" onClick={this.onUpdateCancelClick} >Cancel</button>
@@ -112,6 +128,8 @@ var TodoistSidebar = React.createClass({
                     value={this.state.label}
                     onChange={this.onLabelChange} />
                 </div>
+                <Projects selectedProject={this.state.task.project_id} onChange={this._changeCurrentProject}/>
+
                 <div className="n1todoist-btnrow">
                 <button className="n1todoist-iconbtn n1todoist-iconbtn--done" onClick={this.onDoneClick} >{this.state.done ? "Undo" : "Done"}</button>
                 <button className="n1todoist-iconbtn n1todoist-iconbtn--delete" onClick={this.onDeleteClick} >Delete</button>
@@ -131,7 +149,8 @@ var TodoistSidebar = React.createClass({
 
     onSaveClick: function(){
         var options = {
-            label: this.state.label
+            label: this.state.label,
+            project_id: this.state.project_id
         };
         TodoistTaskStore.save(options);
         this.setState({
@@ -147,6 +166,7 @@ var TodoistSidebar = React.createClass({
 
     onUpdateCancelClick: function(){
         this.setState({
+            project_id: this.old_project,
             update: false
         });
     },

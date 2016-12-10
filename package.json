@@ -11,6 +11,9 @@
   },
   "description": "Enter a description of your package!",
   "dependencies": {
+    "react-addons-css-transition-group": "^0.14.7",
+    "react-addons-shallow-compare": "^0.14.7",
+    "react-selectize": "^0.9.0",
     "superagent": "^1.8.0"
   },
   "license": "MIT"
