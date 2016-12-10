@@ -18,6 +18,7 @@ module.exports = React.createClass({
         return {
             projects: TodoistProjectStore.getProjects(),
             current_project_id: null,
+            selectedOption: null
         }
     },
 
@@ -40,8 +41,6 @@ module.exports = React.createClass({
         let inboxProject = null;
         if(this.state.projects){
             options = this.state.projects.map(function(project){
-                console.log(self.state.current_project_id);
-                console.log(project.id);
                 if(self.state.current_project_id === project.id){
                     currentProject = {value: project.id, label: project.name, color: project.color, indent: project.indent};
                 }
@@ -51,13 +50,15 @@ module.exports = React.createClass({
                 return {value: project.id, label: project.name, color: project.color, indent: project.indent};
             });
         }
+        const selectedOption = this.state.selectedOption ? this.state.selectedOption : (currentProject ? currentProject : inboxProject);
 
         return (
             <div>
                 <SimpleSelect
                     options={options}
-                    defaultValue={currentProject ? currentProject : inboxProject}
+                    value={selectedOption}
                     onValueChange={function(item){
+                        self.setState({selectedOption: item})
                         self.props.onChange(item ? item.value : null);
                     }}
                     renderOption={function(item){
@@ -87,11 +88,13 @@ module.exports = React.createClass({
 
     onTaskStoreChange: function(){
         let currTask = TodoistTaskStore.taskForFocusedContent();
-        console.log(currTask);
-        let currProjectId = currTask.project_id ? currTask.project_id : null;
-        this.setState({
-            project_id: currProjectId
-        })
+        if(currTask !== null){
+            let currProjectId = currTask.project_id ? currTask.project_id : null;
+            this.setState({
+                current_project_id: currProjectId
+            })
+        }
+
     },
 
     _setStateFromProjectStore: function(){

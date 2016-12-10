@@ -62,7 +62,11 @@ var TodoistSidebar = React.createClass({
     },
 
     _changeCurrentProject: function(project){
-        this.setState({project_id: project});
+        this.old_project = this.state.project_id;
+        this.setState({
+            project_id: project,
+            update: !this.state.task ? false : true
+        });
     },
 
 
@@ -108,7 +112,7 @@ var TodoistSidebar = React.createClass({
                     type="text"
                     value={this.state.label}
                     onChange={this.onLabelChange} />
-                <Projects onChange={this._changeCurrentProject}/>
+                <Projects selectedProject={this.state.task.project_id} onChange={this._changeCurrentProject}/>
                 <div className="n1todoist-btnrow">
                 <button className="n1todoist-updatebtn" onClick={this.onSaveClick} >Save</button>
                 <button className="n1todoist-cancelbtn" onClick={this.onUpdateCancelClick} >Cancel</button>
@@ -124,7 +128,7 @@ var TodoistSidebar = React.createClass({
                     value={this.state.label}
                     onChange={this.onLabelChange} />
                 </div>
-                <Projects onChange={this._changeCurrentProject}/>
+                <Projects selectedProject={this.state.task.project_id} onChange={this._changeCurrentProject}/>
 
                 <div className="n1todoist-btnrow">
                 <button className="n1todoist-iconbtn n1todoist-iconbtn--done" onClick={this.onDoneClick} >{this.state.done ? "Undo" : "Done"}</button>
@@ -162,6 +166,7 @@ var TodoistSidebar = React.createClass({
 
     onUpdateCancelClick: function(){
         this.setState({
+            project_id: this.old_project,
             update: false
         });
     },
