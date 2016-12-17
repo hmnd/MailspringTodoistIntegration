@@ -1,54 +1,49 @@
-import {
-    React
-} from 'nylas-exports';
+import { React } from 'nylas-exports';
 import request from 'superagent';
-import {
-    remote
-} from 'electron';
-var BrowserWindow = remote.BrowserWindow;
-var loginWindow;
+import { remote } from 'electron';
+const { BrowserWindow } = remote;
 
-module.exports = React.createClass({
+export default class Login extends React.Component{
 
-    render: function(){
+    static propTypes = {
+        credentials: React.PropTypes.object
+    }
+
+    render(){
         return <button className="n1todoist-loginbtn" onClick={this.handleLoginClick}> Login </button>
-    },
+    }
 
-    handleLoginClick: function(){
-        var loginUrl = this.props.credentials.oauth + '?client_id=' + this.props.credentials.clientId + '&scope=' + this.props.credentials.scopes;
-        loginWindow = new BrowserWindow({ width: 400, height: 500, show: false, 'node-integration': false });
-        loginWindow.loadURL(loginUrl);
-        loginWindow.show();
-        loginWindow.webContents.on('did-get-redirect-request',this.handleLoginCallback);
-    },
+    handleLoginClick = () => {
+        const loginUrl = this.props.credentials.oauth + '?client_id=' + this.props.credentials.clientId + '&scope=' + this.props.credentials.scopes;
+        this.loginWindow = new BrowserWindow({ width: 400, height: 500, show: false, 'node-integration': false });
+        this.loginWindow.loadURL(loginUrl);
+        this.loginWindow.show();
+        this.loginWindow.webContents.on('did-get-redirect-request',this.handleLoginCallback);
+    }
 
-    handleLogoutClick: function(){
+    handleLogoutClick = () => {
         localStorage.removeItem("N1todoist_authentication");
         this.setState({authenticated: false});
-    },
+    }
 
-
-    handleLoginCallback: function(event, oauthUrl, tokenUrl){
-        //loginWindow.destroy();
-
-        var rawCode = /code=([^&]*)/.exec(tokenUrl)
-        var code = null
+    handleLoginCallback = (event, oauthUrl, tokenUrl) => {
+        const rawCode = /code=([^&]*)/.exec(tokenUrl)
         if (rawCode && rawCode.length > 1){
-            var code = rawCode[1]
+            const code = rawCode[1]
             request.post("https://todoist.com/oauth/access_token")
             .send({ client_id: this.props.credentials.clientId, client_secret: this.props.credentials.clientSecret, code: code, redirect_uri: "https://alexfruehwirth.codes" })
             .set('Content-Type','application/x-www-form-urlencoded')
             .end(this.handleAccessTokenResponse)
         }
-    },
+    }
 
-    handleAccessTokenResponse: function(error, response){
+    handleAccessTokenResponse = (error, response) => {
         if(response && response.ok){
             localStorage.setItem('N1todoist_authentication', response.body.access_token)
             this.props.whenLoggedIn();
-            loginWindow.destroy();
+            this.loginWindow.destroy();
         }else{
             console.log(error);
         }
     }
-});
+}
