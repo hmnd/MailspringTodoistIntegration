@@ -9,6 +9,7 @@ import Login from './login';
 import Logout from './logout';
 import Projects from './projects';
 import TodoistTaskStore from './todoist-task-store';
+import { KeyCommandsRegion } from 'nylas-component-kit';
 
 var todoistCredentials = {
     url: 'https://todoist.com/API/v6/sync',
@@ -69,7 +70,14 @@ var TodoistSidebar = React.createClass({
         });
     },
 
-
+    _keyMapHandlers(action){
+        const keyMapActions = {
+            'add': this.onSaveClick,
+            'done': this.onDoneClick,
+        };
+        
+        return {'n1todoistintegration:add-to-project': keyMapActions[action]};
+    },
 
     render: function(){
         return <div className={"n1todoist-wrapper" + (this.state.loading ? " loading" : "")}>
@@ -97,6 +105,7 @@ var TodoistSidebar = React.createClass({
                 </div>
         }else if(!this.state.task){
             return <div>
+                <KeyCommandsRegion globalHandlers={this._keyMapHandlers('add')}/>
                 <input
                     className="n1todoist-textinput"
                     type="text"
@@ -120,6 +129,7 @@ var TodoistSidebar = React.createClass({
                 </div>
         }else{
             return <div>
+                <KeyCommandsRegion globalHandlers={this._keyMapHandlers('done')}/>
                 <div onClick={this.onEditClick} >
                 <input
                     className="n1todoist-textinput"
@@ -152,6 +162,7 @@ var TodoistSidebar = React.createClass({
             label: this.state.label,
             project_id: this.state.project_id
         };
+        console.log(options);
         TodoistTaskStore.save(options);
         this.setState({
             update: false
