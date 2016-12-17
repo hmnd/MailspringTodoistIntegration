@@ -7,8 +7,8 @@ import TodoistProjectStore from './todoist-project-store';
 import TodoistTaskStore from './todoist-task-store';
 
 export default class Projects extends React.Component{
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state = {
             projects: TodoistProjectStore.getProjects(),
             current_project_id: null,
