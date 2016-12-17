@@ -1,7 +1,4 @@
-import {
-  ComponentRegistry
-} from 'nylas-exports';
-
+import { ComponentRegistry } from 'nylas-exports';
 import TodoistSidebar from './todoist-sidebar';
 import TodoistLabel from './todoist-label';
 
@@ -14,11 +11,6 @@ export function activate() {
     role: 'Thread:MailLabel',
   });
 }
-
-export function serialize() {
-
-}
-
 export function deactivate() {
   ComponentRegistry.unregister(TodoistComposer);
   ComponentRegistry.unregister(TodoistSidebar);
