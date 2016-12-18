@@ -12,11 +12,8 @@ class TodoistProjectStore extends NylasStore {
     this.listenTo(FocusedContentStore, this._onFocusedContentChanged);
   }
 
-
   _onFocusedContentChanged(){
-
     this._todoistFetchProjects();
-
   }
 
   _setSynchToken(token){
@@ -24,18 +21,17 @@ class TodoistProjectStore extends NylasStore {
   }
 
   _getSynchToken(){
-    var token = localStorage.getItem("N1todoist_project_synchToken");
-
+    const token = localStorage.getItem("N1todoist_project_synchToken");
     return token !== null ? token : '*';
   }
 
   _todoistFetchProjects() {
-    let accessToken = localStorage.getItem("N1todoist_authentication")
+    const accessToken = localStorage.getItem("N1todoist_authentication")
     let synchToken = this._getSynchToken();
     // TODO: implement incremental synch
     synchToken = '*';
-    let resourceTypes = ['projects'];
-    let payload = { token: accessToken, sync_token: synchToken, resource_types: JSON.stringify(resourceTypes)}
+    const resourceTypes = ['projects'];
+    const payload = { token: accessToken, sync_token: synchToken, resource_types: JSON.stringify(resourceTypes)}
 
     if (accessToken) {
       request
@@ -59,24 +55,6 @@ class TodoistProjectStore extends NylasStore {
   _setProjects(projects){
     projects.sort(this._sortProjects);
     this._projects = projects;
-
-    // this._tasks = tasks;
-    // let storageTasks = this.getTaskStorage();
-    // for(var taskKey in tasks){
-    //   for(var clientKey in storageTasks){
-    //     if(tasks[taskKey].id === storageTasks[clientKey].id){
-    //
-    //       // storageTasks[clientKey].project_id = tasks[taskKey].project_id;
-    //       storageTasks[clientKey].content = tasks[taskKey].content;
-    //       storageTasks[clientKey].done = tasks[taskKey].checked === 1 ? true : false;
-    //       if(tasks[taskKey].is_deleted === 1){
-    //         delete storageTasks[clientKey];
-    //       }
-    //
-    //     }
-    //   }
-    // }
-
     this.trigger(this);
   }
 
@@ -93,7 +71,6 @@ class TodoistProjectStore extends NylasStore {
       return 0;
     }
   }
-
 }
 
 export default new TodoistProjectStore();
