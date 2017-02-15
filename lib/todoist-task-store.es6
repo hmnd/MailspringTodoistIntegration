@@ -269,7 +269,7 @@ class TodoistTaskStore extends NylasStore {
   _handleAddTaskResponse(error, response) {
     if (response && response.ok) {
       const taskId = response.body.temp_id_mapping[this.temp_id];
-      const tasks = this.getTaskStorage();
+      let tasks = this.getTaskStorage();
       const thread = this._getThread();
       if (!tasks) {
         tasks = {};

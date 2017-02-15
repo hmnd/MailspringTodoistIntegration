@@ -1,7 +1,7 @@
 import { React } from 'nylas-exports';
 // http://furqanzafar.github.io/react-selectize/#/?category=simple
 // Check for custom styling (color + levels) etc.
-import { SimpleSelect } from 'react-selectize';
+import { SimpleSelect } from '../modules/react-selectize';
 
 import TodoistProjectStore from './todoist-project-store';
 import TodoistTaskStore from './todoist-task-store';

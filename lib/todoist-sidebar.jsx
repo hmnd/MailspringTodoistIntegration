@@ -54,7 +54,7 @@ export default class TodoistSidebar extends React.Component{
         });
     }
 
-    _changeCurrentProject(project){
+    _changeCurrentProject = (project) => {
         this.old_project = this.state.project_id;
         this.setState({
             project_id: project,
