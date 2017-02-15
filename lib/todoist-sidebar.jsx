@@ -1,17 +1,11 @@
-import {
-    Utils,
-    React,
-    ReactDOM,
-    FocusedContentStore
-} from 'nylas-exports';
-
+import { Utils, React, ReactDOM, FocusedContentStore } from 'nylas-exports';
+import { KeyCommandsRegion } from 'nylas-component-kit';
+import TodoistTaskStore from './todoist-task-store';
 import Login from './login';
 import Logout from './logout';
 import Projects from './projects';
-import TodoistTaskStore from './todoist-task-store';
-import { KeyCommandsRegion } from 'nylas-component-kit';
 
-var todoistCredentials = {
+const todoistCredentials = {
     url: 'https://todoist.com/API/v6/sync',
     oauth: 'https://todoist.com/oauth/authorize',
     clientSecret: 'de5502a2394144bf8bada72848c7ce41',
@@ -19,16 +13,14 @@ var todoistCredentials = {
     scopes: ["data:read_write", "data:delete"]
 }
 
-var loginWindow = null;
-
 //TODO: Add schedule
-//TODO: Add project selection
 
-var TodoistSidebar = React.createClass({
+export default class TodoistSidebar extends React.Component{
+    static displayName = 'TodoistSidebar';
 
-
-    getInitialState: function(){
-        return {
+    constructor(props){
+        super(props);
+        this.state = {
             task: TodoistTaskStore.taskForFocusedContent() ? TodoistTaskStore.taskForFocusedContent().id : null,
             label: TodoistTaskStore.taskForFocusedContent() ? TodoistTaskStore.taskForFocusedContent().content : FocusedContentStore.focused('thread').subject,
             project_id: null,
@@ -36,39 +28,39 @@ var TodoistSidebar = React.createClass({
             done: TodoistTaskStore.getDone(),
             update: false,
             loading: false
-        }
-    },
+        };
+    }
 
-    componentDidMount: function(){
+    componentDidMount(){
         this._unsubscribeTaskStore = TodoistTaskStore.listen(this.onTaskStoreChange);
-    },
+    }
 
-    componentWillUnmount: function() {
+    componentWillUnmount() {
         this._unsubscribeTaskStore();
-    },
+    }
 
 
-    onTaskStoreChange: function(){
+    onTaskStoreChange = () => {
         this._setStateFromTaskStore();
-    },
+    }
 
 
-    _setStateFromTaskStore: function(){
+    _setStateFromTaskStore(){
         this.setState({
             task: TodoistTaskStore.taskForFocusedContent() ? TodoistTaskStore.taskForFocusedContent().id : null,
             label: TodoistTaskStore.taskForFocusedContent() ? TodoistTaskStore.taskForFocusedContent().content : FocusedContentStore.focused('thread').subject,
             loading: TodoistTaskStore.loading(),
             done: TodoistTaskStore.getDone()
         });
-    },
+    }
 
-    _changeCurrentProject: function(project){
+    _changeCurrentProject = (project) => {
         this.old_project = this.state.project_id;
         this.setState({
             project_id: project,
             update: !this.state.task ? false : true
         });
-    },
+    }
 
     _keyMapHandlers(action){
         const keyMapActions = {
@@ -77,9 +69,9 @@ var TodoistSidebar = React.createClass({
         };
         
         return {'n1todoistintegration:add-to-project': keyMapActions[action]};
-    },
+    }
 
-    render: function(){
+    render(){
         return <div className={"n1todoist-wrapper" + (this.state.loading ? " loading" : "")}>
             <div className="n1todoist-loading">
                 <div className="n1todoist-loadingtext">Loading...</div>
@@ -94,9 +86,9 @@ var TodoistSidebar = React.createClass({
                 {this._renderFooter()}
             </div>
             </div>
-    },
+    }
 
-    _renderContent: function(){
+    _renderContent(){
         if(!this.state.authenticated){
             return <div>
                     <div className="n1todoist-logintext"> Login with your Todoist account </div>
@@ -146,68 +138,63 @@ var TodoistSidebar = React.createClass({
                 </div>
                 </div>
         }
-    },
+    }
 
-    _renderFooter: function(){
+    _renderFooter(){
         if(this.state.authenticated){
             return <Logout whenLoggedOut={this.handleLogout} />
         }else{
             return <span></span>
         }
 
-    },
+    }
 
-    onSaveClick: function(){
+    onSaveClick = () => {
         var options = {
             label: this.state.label,
             project_id: this.state.project_id
         };
-        console.log(options);
         TodoistTaskStore.save(options);
         this.setState({
             update: false
         });
-    },
+    }
 
-    onEditClick: function(){
+    onEditClick = () => {
         this.setState({
             update: true
         });
-    },
+    }
 
-    onUpdateCancelClick: function(){
+    onUpdateCancelClick = () => {
         this.setState({
             project_id: this.old_project,
             update: false
         });
-    },
+    }
 
-    onDoneClick: function(){
+    onDoneClick = () => {
         if(this.state.done){
             TodoistTaskStore.undo();
         }else{
             TodoistTaskStore.done();
         }
-    },
+    }
 
-    onDeleteClick: function(){
+    onDeleteClick = () => {
         TodoistTaskStore.delete();
-    },
+    }
 
-    onLabelChange: function(event){
+    onLabelChange = (event) => {
         this.setState({label: event.target.value});
-    },
+    }
 
-    handleLogin: function(){
+    handleLogin = () => {
         this.setState({authenticated: true});
-    },
+    }
 
-    handleLogout: function(){
+    handleLogout = () => {
         this.setState({authenticated: false});
     }
 
-
-
-});
-
-module.exports = TodoistSidebar;
+}

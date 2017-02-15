@@ -1,50 +1,41 @@
-import {
-    React,
-} from 'nylas-exports';
+import { React } from 'nylas-exports';
+// http://furqanzafar.github.io/react-selectize/#/?category=simple
+// Check for custom styling (color + levels) etc.
+import { SimpleSelect } from '../modules/react-selectize';
 
 import TodoistProjectStore from './todoist-project-store';
 import TodoistTaskStore from './todoist-task-store';
-import ReactSelectize from 'react-selectize';
 
-var SimpleSelect = ReactSelectize.SimpleSelect;
-
-// http://furqanzafar.github.io/react-selectize/#/?category=simple
-// Check for custom styling (color + levels) etc.
-
-
-module.exports = React.createClass({
-
-    getInitialState: function(){
-        return {
+export default class Projects extends React.Component{
+    constructor(props){
+        super(props);
+        this.state = {
             projects: TodoistProjectStore.getProjects(),
             current_project_id: null,
             selectedOption: null
-        }
-    },
+        };
+    }
 
-    componentDidMount: function(){
+    componentDidMount(){
         this._unsubscribeProjectStore = TodoistProjectStore.listen(this.onProjectStoreChange);
         this._unsubscribeTaskStore = TodoistTaskStore.listen(this.onTaskStoreChange);
-    },
+    }
 
-    componentWillUnmount: function() {
+    componentWillUnmount() {
         this._unsubscribeProjectStore();
         this._unsubscribeTaskStore();
-    },
+    }
 
-
-
-    render: function(){
-        var self = this;
+    render(){
         let options = [];
         let currentProject = null;
         let inboxProject = null;
         if(this.state.projects){
-            options = this.state.projects.map(function(project){
-                if(self.state.current_project_id === project.id){
+            options = this.state.projects.map(project => {
+                if(this.state.current_project_id === project.id){
                     currentProject = {value: project.id, label: project.name, color: project.color, indent: project.indent};
                 }
-                if(project.inbox_project){
+                if(this.inbox_project){
                     inboxProject = {value: project.id, label: project.name, color: project.color, indent: project.indent};
                 }
                 return {value: project.id, label: project.name, color: project.color, indent: project.indent};
@@ -57,11 +48,11 @@ module.exports = React.createClass({
                 <SimpleSelect
                     options={options}
                     value={selectedOption}
-                    onValueChange={function(item){
-                        self.setState({selectedOption: item})
-                        self.props.onChange(item ? item.value : null);
+                    onValueChange={(item) => {
+                        this.setState({selectedOption: item})
+                        this.props.onChange(item ? item.value : null);
                     }}
-                    renderOption={function(item){
+                    renderOption={(item) =>{
                         return (
                             <div className={"simple-option n1todoist-project-listitem n1todoist-project-listitem-indent--"+item.indent}>
                                 <span className={"n1todoist-project-listitem__color n1todoist-color--" + item.color}></span>
@@ -69,7 +60,7 @@ module.exports = React.createClass({
                             </div>
                         );
                     }}
-                    renderValue={function(item){
+                    renderValue={(item) =>{
                         return (
                             <div className="simple-value n1todoist-project-listitem n1todoist-project-value">
                                 <span className={"n1todoist-project-listitem__color n1todoist-color--" + item.color}></span>
@@ -80,31 +71,26 @@ module.exports = React.createClass({
                 />
             </div>
         );
-    },
+    }
 
-    onProjectStoreChange: function(){
+    onProjectStoreChange = () => {
         this._setStateFromProjectStore();
-    },
+    }
 
-    onTaskStoreChange: function(){
-        let currTask = TodoistTaskStore.taskForFocusedContent();
+    onTaskStoreChange = () => {
+        const currTask = TodoistTaskStore.taskForFocusedContent();
         if(currTask !== null){
-            let currProjectId = currTask.project_id ? currTask.project_id : null;
+            const currProjectId = currTask.project_id ? currTask.project_id : null;
             this.setState({
                 current_project_id: currProjectId
             })
         }
 
-    },
+    }
 
-    _setStateFromProjectStore: function(){
+    _setStateFromProjectStore = () => {
         this.setState({
             projects: TodoistProjectStore.getProjects()
         });
-    },
-
-
-
-
-
-});
+    }
+}

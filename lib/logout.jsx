@@ -1,19 +1,17 @@
-import {
-    React
-} from 'nylas-exports';
+import { React } from 'nylas-exports';
 
+export default class Logout extends React.Component{
+    
+    static propTypes = {
+        whenLoggedOut: React.PropTypes.func,
+    }
 
-module.exports = React.createClass({
-
-    render: function(){
+    render(){
         return <button className="n1todoist-logout" onClick={this.handleLogoutClick}> Logout </button>
-    },
+    }
 
-
-    handleLogoutClick: function(){
+    handleLogoutClick = () => {
         localStorage.removeItem("N1todoist_authentication");
         this.props.whenLoggedOut();
-    },
-
-
-});
+    }
+}
