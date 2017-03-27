@@ -9,7 +9,7 @@ This package is inspired by [anopensourceguy/TodoistN1](https://github.com/anope
 
 ---
 
-##Todos
+## Todos
 - [x] Done/Undo - Add/Remove Task
 - [x] Label E-mail
 - [x] Synchronize tasks
@@ -19,5 +19,5 @@ This package is inspired by [anopensourceguy/TodoistN1](https://github.com/anope
 - [ ] Better UI
 - [ ] Filtered thread by tasks
 
-##Screenhots
+## Screenhots
 ![](assets/screen.jpg)
