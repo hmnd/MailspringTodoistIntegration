@@ -7,7 +7,7 @@
     "url": ""
   },
   "engines": {
-    "nylas": ">=0.4.14-53cd69b"
+    "mailspring": ">=0.4.14-53cd69b"
   },
   "description": "",
   "dependencies": {
