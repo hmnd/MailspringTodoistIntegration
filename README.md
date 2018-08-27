@@ -1,7 +1,7 @@
 
 # Todoist Integration for Nylas N1
 
-This is a Todoist integration for [Nylas N1](https://nylas.com/n1)
+This is a Todoist integration for [Mailspring](https://getmailspring.com/)
 
 This plugin is still under development. Bug reports, feature requests are appreciated!
 
